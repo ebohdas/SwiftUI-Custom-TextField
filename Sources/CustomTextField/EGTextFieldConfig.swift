@@ -42,6 +42,7 @@ public class EGTextFieldConfig{
     public var darkModeFocusedBorderColor : Color = .white
     //Font
     public var titleFont : Font = .callout
+    public var textFont : Font = .callout
     public var errorFont : Font = .footnote
     public var placeHolderFont : Font = .subheadline
     //Default

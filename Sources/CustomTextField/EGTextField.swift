@@ -62,6 +62,7 @@ public struct EGTextField: View {
     private var darkModeFocusedBorderColor = EGTextFieldConfig.shared.darkModeFocusedBorderColor
     //Font
     private var titleFont = EGTextFieldConfig.shared.titleFont
+    private var textFont = EGTextFieldConfig.shared.textFont
     private var errorFont = EGTextFieldConfig.shared.errorFont
     private var placeHolderFont = EGTextFieldConfig.shared.placeHolderFont
     //Default
@@ -157,10 +158,14 @@ public struct EGTextField: View {
                 else{
                     isFocused = false
                 }
-            }))
+            })
+                .font(textFont)
+            )
         }
         else{
-            return AnyView(SecureField("", text: text))
+            return AnyView(SecureField("", text: text)
+                .font(textFont)
+            )
         }
     }
     private func getBorderColor() -> Color{
@@ -227,6 +232,11 @@ extension EGTextField{
     public func setTextColor(_ color: Color) -> Self{
         var copy = self
         copy.defaultTextColor = color
+        return copy
+    }
+    public func setTextFont(_ font: Font) -> Self{
+        var copy = self
+        copy.textFont = font
         return copy
     }
     public func setDarkModeTextColor(_ color: Color) -> Self{
