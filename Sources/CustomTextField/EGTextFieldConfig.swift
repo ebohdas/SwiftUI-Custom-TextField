@@ -51,6 +51,7 @@ public class EGTextFieldConfig{
     public var borderType: BorderType = .square
     public var disableAutoCorrection: Bool = false
     public var textFieldHeight : CGFloat = 45
+    public var textContentType : UITextContentType?
 }
 
 public enum BorderType {

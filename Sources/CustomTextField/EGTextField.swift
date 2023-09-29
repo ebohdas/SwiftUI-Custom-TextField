@@ -71,7 +71,8 @@ public struct EGTextField: View {
     private var borderType = EGTextFieldConfig.shared.borderType
     private var disableAutoCorrection = EGTextFieldConfig.shared.disableAutoCorrection
     private var textFieldHeight = EGTextFieldConfig.shared.textFieldHeight
-    
+    private var textContentType = EGTextFieldConfig.shared.textContentType
+
     public init(text: Binding<String>) {
         self.text = text
     }
@@ -160,11 +161,13 @@ public struct EGTextField: View {
                 }
             })
                 .font(textFont)
+                .textContentType(textContentType)
             )
         }
         else{
             return AnyView(SecureField("", text: text)
                 .font(textFont)
+                .textContentType(textContentType)
             )
         }
     }
@@ -420,6 +423,11 @@ extension EGTextField{
     public func setTextFieldHeight(_ height: CGFloat) -> Self{
         var copy = self
         copy.textFieldHeight = height
+        return copy
+    }
+    public func setTextContentType(_ textContentType: UITextContentType) -> Self{
+        var copy = self
+        copy.textContentType = textContentType
         return copy
     }
 }
