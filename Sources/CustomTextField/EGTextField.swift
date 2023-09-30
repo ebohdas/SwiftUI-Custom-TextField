@@ -140,9 +140,9 @@ public struct EGTextField: View {
                 }
             }
             //Bottom text
-            if let error = error?.wrappedValue{
-                if error{
-                    Text(errorText?.wrappedValue ?? "")
+            if let error = error?.wrappedValue, let errorText = errorText?.wrappedValue {
+                if error {
+                    Text(errorText)
                         .font(errorFont)
                         .foregroundColor(getErrorTextColor())
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -306,6 +306,11 @@ extension EGTextField{
         var copy = self
         copy.error = error
         copy.errorText = errorText
+        return copy
+    }
+    public func setError(error: Binding<Bool>) -> Self {
+        var copy = self
+        copy.error = error
         return copy
     }
     public func setErrorTextColor(_ color: Color) -> Self{
