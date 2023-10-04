@@ -12,13 +12,7 @@ public struct EGTextField: View {
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @State private var trailingImage : Image?
-    @State private var secureText = false{
-        didSet{
-            if secureText{
-                isFocused = false
-            }
-        }
-    }
+    @State private var secureText = false
     @State var isFocused = false
     private var text: Binding<String>
     private var disable: Binding<Bool>?
