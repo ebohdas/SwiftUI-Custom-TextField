@@ -12,7 +12,13 @@ public struct EGTextField: View {
     
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @State private var trailingImage : Image?
-    @State private var secureText = false
+    @State private var secureText = false{
+        didSet{
+            if secureText{
+                isFocused = false
+            }
+        }
+    }
     @State var isFocused = false
     private var text: Binding<String>
     private var disable: Binding<Bool>?
@@ -22,6 +28,7 @@ public struct EGTextField: View {
     private var titleText: String?
     private var placeHolderText: String = ""
     private var trailingImageClick: (() -> Void)?
+    private var secureFocusLostAction: (() -> Void)?
     private var secureTextImageOpen : Image? = Image(systemName: "eye.fill")
     private var secureTextImageClose : Image? = Image(systemName: "eye.slash.fill")
     private var maxCount: Int?
@@ -112,12 +119,18 @@ public struct EGTextField: View {
                         .frame(width: 25, height: 25)
                         .padding(.trailing, 12)
                         .onTapGesture {
-                            if !isSecureText{
-                                trailingImageClick?()
-                            }
-                            else{
+                            if isSecureText {
+                                let wasFocused = self.isFocused
                                 secureText.toggle()
                                 trailingImage = secureText ? secureTextImageClose : secureTextImageOpen
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                                    if wasFocused {
+                                        self.isFocused = wasFocused
+                                        secureFocusLostAction?()
+                                    }
+                                })
+                            } else {
+                                trailingImageClick?()
                             }
                         }
                         .disabled(disable?.wrappedValue ?? false)
@@ -159,10 +172,13 @@ public struct EGTextField: View {
             )
         }
         else{
-            return AnyView(SecureField("", text: text)
-                .font(textFont)
-                .textContentType(textContentType)
-            )
+            return AnyView(
+                SecureField("", text: text, onCommit: { isFocused = false })
+                    .font(textFont)
+                    .textContentType(textContentType)
+                    .onTapGesture {
+                        isFocused = true
+                    })
         }
     }
     private func getBorderColor() -> Color{
@@ -326,6 +342,16 @@ extension EGTextField{
         var copy = self
         copy._trailingImage = State(initialValue: image)
         copy.trailingImageClick = click
+        return copy
+    }
+    public func setTrailingClick(_ click: @escaping (()->Void)) -> Self{
+        var copy = self
+        copy.trailingImageClick = click
+        return copy
+    }
+    public func setSecureFocusLostAction(_ click: @escaping (()->Void)) -> Self{
+        var copy = self
+        copy.secureFocusLostAction = click
         return copy
     }
     public func setSecureText(_ secure: Bool) -> Self{
