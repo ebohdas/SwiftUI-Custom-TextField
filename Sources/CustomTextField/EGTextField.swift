@@ -20,6 +20,7 @@ public struct EGTextField: View {
         }
     }
     @State var isFocused = false
+    private var lineLimit: Int?
     private var text: Binding<String>
     private var disable: Binding<Bool>?
     private var error: Binding<Bool>?
@@ -159,17 +160,39 @@ public struct EGTextField: View {
     }
     private func secureAnyView() -> AnyView{
         if !secureText{
-            return AnyView(TextField("", text: text, onEditingChanged: { changed in
-                if changed{
-                    isFocused = true
+            if let lineLimit = self.lineLimit {
+                if #available(iOS 16.0, *) {
+                    return AnyView(TextField("", text: text, axis: .vertical)
+                        .font(textFont)
+                        .textContentType(textContentType)
+                        .lineLimit(lineLimit, reservesSpace: true)
+                        .onTapGesture {
+                            isFocused = true
+                        })
+                } else {
+                    return AnyView(TextField("", text: text, onEditingChanged: { changed in
+                        if changed{
+                            isFocused = true
+                        }
+                        else{
+                            isFocused = false
+                        }
+                    })
+                    .font(textFont)
+                    .textContentType(textContentType))
                 }
-                else{
-                    isFocused = false
-                }
-            })
+            } else {
+                return AnyView(TextField("", text: text, onEditingChanged: { changed in
+                    if changed{
+                        isFocused = true
+                    }
+                    else{
+                        isFocused = false
+                    }
+                })
                 .font(textFont)
-                .textContentType(textContentType)
-            )
+                .textContentType(textContentType))
+            }
         }
         else{
             return AnyView(
@@ -453,6 +476,11 @@ extension EGTextField{
     public func setTextContentType(_ textContentType: UITextContentType) -> Self{
         var copy = self
         copy.textContentType = textContentType
+        return copy
+    }
+    public func setLineLimit(_ lineLimit: Int) -> Self{
+        var copy = self
+        copy.lineLimit = lineLimit
         return copy
     }
 }
